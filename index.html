@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ماشین‌حساب بازسازی نوآسا</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: #eef2f7;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 30px 15px;
+        }
+        .container {
+            background: #fff;
+            max-width: 860px;
+            width: 100%;
+            border-radius: 28px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.07);
+            padding: 35px 30px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #f0f4fa;
+            padding-bottom: 16px;
+            margin-bottom: 22px;
+        }
+        .header h1 {
+            font-size: 24px;
+            color: #1a2a3a;
+        }
+        .header h1 small {
+            font-size: 15px;
+            font-weight: 400;
+            color: #6b7a8a;
+        }
+        .header .step-badge {
+            background: #eaf3ef;
+            color: #1f6e58;
+            padding: 5px 18px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .step {
+            display: none;
+            animation: fade 0.3s ease;
+        }
+        .step.active {
+            display: block;
+        }
+        @keyframes fade {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        label {
+            font-weight: 600;
+            color: #1f2a3a;
+            display: block;
+            margin-bottom: 4px;
+            font-size: 15px;
+        }
+        input[type="number"],
+        input[type="text"] {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #dce3ec;
+            border-radius: 14px;
+            font-size: 18px;
+            background: #fafcff;
+            transition: 0.2s;
+        }
+        input:focus {
+            border-color: #2b7a62;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(43, 122, 98, 0.08);
+        }
+        .hint {
+            font-size: 13px;
+            color: #8899aa;
+            margin-top: 4px;
+        }
+        .btn {
+            background: #2b7a62;
+            color: #fff;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 40px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            margin-top: 22px;
+        }
+        .btn:hover {
+            background: #1e6250;
+            transform: scale(1.01);
+        }
+        .btn-outline {
+            background: transparent;
+            color: #1f2a3a;
+            border: 2px solid #dce3ec;
+        }
+        .btn-outline:hover {
+            background: #f4f8fc;
+            transform: none;
+        }
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 22px;
+        }
+        .btn-group .btn {
+            flex: 1;
+            margin-top: 0;
+        }
+        .btn-print {
+            background: #1a3a5a;
+        }
+        .btn-print:hover {
+            background: #0f2a44;
+        }
+
+        .main-item {
+            background: #f8fafd;
+            border: 2px solid #eef2f7;
+            border-radius: 16px;
+            padding: 16px 18px;
+
+margin-bottom: 14px;
+            transition: 0.2s;
+        }
+        .main-item.selected {
+            border-color: #2b7a62;
+            background: #f3faf8;
+        }
+        .main-item .item-header {
+            display: flex;
+            align-items: center;
+
+gap: 12px;
+        }
+        .main-item .item-header input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #2b7a62;
+            cursor: pointer;
+        }
+        .main-item .item-header label {
+            font-size: 17px;
+            font-weight: 700;
+            margin: 0;
+            cursor: pointer;
+            color: #1a2a3a;
+        }
+        .sub-items {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1.5px dashed #dce3ec;
+            display: none;
+        }
+        .main-item.selected .sub-items {
+            display: block;
+        }
+        .sub-group {
+            background: #fff;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            border: 1px solid #e4eaf2;
+        }
+        .sub-group .sub-title {
+            font-weight: 600;
+            color: #1f3a2e;
+            font-size: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .row-flex {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 20px;
+            align-items: center;
+        }
+        .row-flex .field {
+            flex: 1;
+            min-width: 120px;
+        }
+        .row-flex .field label {
+            font-weight: 500;
+            font-size: 13px;
+            color: #4a5a6a;
+        }
+        .row-flex .field input[type="number"] {
+            padding: 8px 12px;
+            font-size: 15px;
+            width: 100%;
+        }
+        .check-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 18px;
+            margin-top: 4px;
+        }
+        .check-group label {
+            font-weight: 400;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+        .check-group input[type="checkbox"],
+        .check-group input[type="radio"] {
+            width: 17px;
+            height: 17px;
+            accent-color: #2b7a62;
+            cursor: pointer;
+        }
+        .price-edit {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 6px;
+        }
+        .price-edit input[type="number"] {
+            width: 120px;
+            padding: 6px 10px;
+            font-size: 14px;
+            border: 1.5px solid #dce3ec;
+            border-radius: 10px;
+        }
+        .price-edit span {
+            font-size: 13px;
+            color: #5a6a7a;
+        }
+        .summary-box {
+            background: #eaf3ef;
+            border-radius: 16px;
+            padding: 20px 24px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px dashed #cbd8d0;
+            font-size: 15px;
+            flex-wrap: wrap;
+        }
+        .summary-row:last-child {
+            border: none;
+            font-weight: 700;
+            font-size: 20px;
+            padding-top: 14px;
+            margin-top: 6px;
+            border-top: 2px solid #2b7a62;
+            color: #1a3a2e;
+        }
+        .total-price {
+            color: #1f6e58;
+            font-size: 26px;
+            font-weight: 800;
+        }
+        .footer-note {
+            margin-top: 22px;
+            font-size: 13px;
+            color: #8899aa;
+            text-align: center;
+
+border-top: 1px solid #eef2f7;
+            padding-top: 18px;
+        }
+        @media print {
+            body {
+                background: #fff;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                border: none;
+                padding: 20px;
+            }
+            .btn,
+            .btn-group,
+            .btn-print {
+                display: none !important;
+            }
+            .header .step-badge {
+                display: none;
+            }
+            .main-item {
+                break
+
+-inside: avoid;
+                border-color: #ccc;
+            }
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 14px;
+            }
+            .row-flex {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .row-flex .field {
+                width: 100%;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app">
+
+    <div class="header">
+        <h1>🏗️ نوآسا <small>برآورد هزینه بازسازی</small></h1>
+        <span class="step-badge" id="stepBadge">مرحله ۱ از ۴</span>
+    </div>
+
+    <!-- ===== مرحله ۱ ===== -->
+    <div class="step active" id="step1">
+        <label for="metrajInput">📏 متراژ زیربنا (متر مربع)</label>
+        <input type="number" id="metrajInput" value="100" min="1" step="1" />
+        <div class="hint">مثال: ۱۲۰</div>
+        <button class="btn" onclick="goToStep(2)">مرحله بعد ➜</button>
+    </div>
+
+    <!-- ===== مرحله ۲ ===== -->
+    <div class="step" id="step2">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:8px;">
+            <span style="font-weight:600; font-size:18px;">🛠️ آیتم‌های بازسازی</span>
+            <span style="background:#eef2f7; padding:4px 16px; border-radius:30px; font-weight:600;" id="metrajDisplay2">۱۰۰ متر</span>
+        </div>
+        <div id="mainItemsContainer"></div>
+        <div class="btn-group">
+            <button class="btn btn-outline" onclick="goToStep(1)">← برگشت</button>
+            <button class="btn" onclick="goToStep(3)">مرحله بعد ➜</button>
+        </div>
+    </div>
+
+    <!-- ===== مرحله ۳ ===== -->
+    <div class="step" id="step3">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:8px;">
+            <span style="font-weight:600; font-size:18px;">📋 جزئیات کامل</span>
+            <span style="background:#eef2f7; padding:4px 16px; border-radius:30px; font-weight:600;" id="metrajDisplay3">۱۰۰ متر</span>
+        </div>
+        <div id="detailsContainer"></div>
+        <div class="btn-group">
+            <button class="btn btn-outline" onclick="goToStep(2)">← برگشت</button>
+            <button class="btn" onclick="calculateFinal()">💰 محاسبه برآورد</button>
+        </div>
+    </div>
+
+    <!-- ===== مرحله ۴ ===== -->
+    <div class="step" id="step4">
+        <h2 style="font-size:22px; margin-bottom:6px;">🧾 فاکتور برآوردی شما</h2>
+        <div id="resultSummary" class="summary-box"></div>
+        <div class="btn-group" style="flex-wrap:wrap;">
+            <button class="btn btn-outline" onclick="goToStep(3)">← ویرایش</button>
+            <button class="btn btn-print" onclick="window.print()">🖨️ پرینت / PDF</button>
+            <button class="btn" onclick="resetAll()">🔄 شروع مجدد</button>
+        </div>
+        <div class="footer-note">📌 قیمت‌ها تقریبی هستند. برای استعلام دقیق با نوآسا تماس بگیرید.</div>
+    </div>
+
+</div>
+
+<script>
+    // ================================================================
+    //  دیتای کامل (بر اساس اسکرین‌شات‌ها)
+    // ================================================================
+
+const MAIN_ITEMS = [{
+        id: 'kitchen',
+        name: 'بازسازی آشپزخانه',
+        subs: [
+            { id: 'k1', name: 'کابینت آشپزخانه', type: 'checkbox', pricePerMeter: 450000 },
+            { id: 'k2', name: 'لوازم آشپزخانه', type: 'checkbox', pricePerMeter: 200000 }
+        ]
+    }, {
+        id: 'mech',
+        name: 'تاسیسات مکانیکی',
+        subs: [
+            { id: 'm1', name: 'تعویض لوله کشی', type: 'checkbox', pricePerMeter: 180000 },
+            { id: 'm2', name: 'توصیه برای بناهای بالای ۲۰ سال', type: 'checkbox', pricePerMeter: 0 },
+            { id: 'm3', name: 'رادیاتور', type: 'checkbox', pricePerMeter: 120000 },
+            { id: 'm4', name: 'پکیج', type: 'checkbox', pricePerMeter: 250000 }
+        ]
+    }, {
+        id: 'bath',
+        name: 'سرویس بهداشتی',
+        subs: [
+
+{ id: 'b1', name: 'تعداد سرویس', type: 'number', defaultVal: 1, pricePerMeter: 0 },
+            { id: 'b2', name: 'طول (متر)', type: 'number', defaultVal: 1.5, pricePerMeter: 0 },
+            { id: 'b3', name: 'عرض (متر)', type: 'number', defaultVal: 2, pricePerMeter: 0 },
+            { id: 'b4', name: 'تعویض کاشی و سرامیک', type: 'checkbox', pricePerMeter: 200000 },
+            { id: 'b5', name: 'لوله کشی و عایق کاری', type: 'checkbox', pricePerMeter: 150000 },
+            { id: 'b6', name: 'سقف کاذب', type: 'checkbox', pricePerMeter: 180000 },
+            { id: 'b7', name: 'درب ضد آب (تعداد)', type: 'number', defaultVal: 1, pricePerMeter: 0 },
+            { id: 'b8', name: 'شیرآلات (تعداد)', type: 'number', defaultVal: 2, pricePerMeter: 0 },
+            { id: 'b9', name: 'روشویی (تعداد)', type: 'number', defaultVal: 1, pricePerMeter: 0 },
+            { id: 'b10', name: 'فرنگی (تعداد)', type: 'number', defaultVal: 0, pricePerMeter: 0 },
+            { id: 'b11', name: 'ایرانی (تعداد)', type: 'number', defaultVal: 1, pricePerMeter: 0 }
+        ]
+    }, {
+        id: 'floor',
+        name: 'کف واحد',
+        subs: [
+            { id: 'f1', name: 'لمینیت', type: 'checkbox', pricePerMeter: 180000 },
+            { id: 'f2', name: 'سرامیک', type: 'checkbox', pricePerMeter: 150000 }
+        ]
+    }, {
+        id: 'paint',
+        name: 'نقاشی',
+        subs: [
+            { id: 'p1', name: 'نقاشی', type: 'checkbox', pricePerMeter: 120000 }
+        ]
+    }, {
+        id: 'ceiling',
+        name: 'سقف کاذب',
+        subs: [
+            { id: 'c1', name: 'کناف کاری', type: 'checkbox', pricePerMeter: 200000 }
+        ]
+    }, {
+        id: 'elect',
+        name: 'برقکاری',
+        subs: [
+            { id: 'e1', name: 'تعویض سیم کشی', type: 'checkbox', pricePerMeter: 100000 },
+            { id: 'e2', name: 'اگر بنا بالای ۲۰ سال است', type: 'checkbox', pricePerMeter: 0 },
+            { id: 'e3', name: 'کلید پریز', type: 'checkbox', pricePerMeter: 60000 },
+            { id: 'e4', name: 'چراغ خطی', type: 'checkbox', pricePerMeter: 80000 },
+            { id: 'e5', name: 'نور مخفی', type: 'checkbox', pricePerMeter: 110000 }
+        ]
+    }, {
+        id: 'closet',
+        name: 'کمد دیواری و دکوراسیون',
+        subs: [
+            { id: 'd1', name: 'کمد دیواری', type: 'checkbox', pricePerMeter: 350000 },
+            { id: 'd2', name: 'چاکفشی', type: 'checkbox', pricePerMeter: 150000 },
+            { id: 'd3', name: 'تی وی وال', type: 'checkbox', pricePerMeter: 200000 },
+            { id: 'd4', name: 'تخریب', type: 'radio', options: ['متوسط', 'کم', 'زیاد'], defaultOption: 'متوسط', priceMap: { 'متوسط': 80000, 'کم': 40000, 'زیاد': 130000 } }
+        ]
+    }];
+
+    // ================================================================
+    //  وضعیت
+    // ================================================================
+    let metraj = 100;
+    let selections = {};
+
+    function initSelections() {
+        selections = {};
+        MAIN_ITEMS.forEach(main => {
+
+const subVals = {};
+            main.subs.forEach(sub => {
+                if (sub.type === 'checkbox') {
+                    subVals[sub.id] = false;
+                } else if (sub.type === 'number') {
+                    subVals[sub.id] = sub.defaultVal || 0;
+                } else if (sub.type === 'radio') {
+                    subVals[sub.id] = sub.defaultOption || sub.options[0];
+                }
+                // price override
+                subVals[sub.id + '_price'] = sub.pricePerMeter || 0;
+            });
+            selections[main.id] = { checked: false, subs: subVals };
+        });
+    }
+    initSelections();
+
+    // ================================================================
+    //  رندر
+    // ================================================================
+    function renderMainItems() {
+        const container = document.getElementById('mainItemsContainer');
+        container.innerHTML = '';
+        MAIN_ITEMS.forEach(main => {
+            const sel = selections[main.id];
+            const card = document.createElement('div');
+            card.className = 'm
+
+ain-item' + (sel.checked ? ' selected' : '');
+            card.dataset.mainId = main.id;
+
+            const header = document.createElement('div');
+            header.className = 'item-header';
+            const cb = document.createElement('input');
+            cb.type = 'checkbox';
+            cb.checked = sel.checked;
+            cb.addEventListener('change', () => {
+                sel.checked = cb.checked;
+                card.classList.toggle('selected', sel.checked);
+            });
+            const lbl = document.createElement('label');
+            lbl.textContent = main.name;
+            header.appendChild(cb);
+            header.appendChild(lbl);
+            card.appendChild(header);
+
+            // زیرآیتم‌ها (خلاصه)
+            const subDiv = document.createElement('div');
+            subDiv.className = 'sub-items';
+            main.subs.forEach(sub => {
+                const p = document.createElement('div');
+                p.style.cssText = 'padding:4px 0; font-size:14px; color:#4a5a6a;';
+                if (sub.type === 'checkbox') {
+                    const chk = document.createElement('input');
+                    chk.type = 'checkbox';
+                    chk.checked = sel.subs[sub.id] || false;
+                    chk.disabled = true;
+                    p.appendChild(chk);
+                    p.appendChild(document.createTextNode(' ' + sub.name));
+                } else if (sub.type === 'number') {
+                    p.textContent = '🔢 ' + sub.name + ': ' + (sel.subs[sub.id] || 0);
+                } else if (sub.type === 'radio') {
+                    p.textContent = '◎ ' + sub.name + ': ' + (sel.subs[sub.id] || '');
+                }
+                subDiv.appendChild(p);
+            });
+            card.appendChild(subDiv);
+            container.appendChild(card);
+        });
+    }
+
+    function renderDetails() {
+        const container = document.getElementById('detailsContainer');
+        container.innerHTML = '';
+        MAIN_ITEMS.forEach(main => {
+            const sel = selections[main.id];
+            if (!sel.checked) return;
+
+            const card = document.createElement('div');
+            card.className = 'main-item selected';
+            const title = document.createElement('div');
+            title.style.cssText = 'font-weight:700; font-size:18px; margin-bottom:12px; color:#1a3a2e;';
+            title.textContent = '🔹 ' + main.name;
+            card.appendChild(title);
+
+            main.subs.forEach(sub => {
+                const group = document.createElement('div');
+                group.className = 'sub-group';
+
+                const row = document.createElement('div');
+                row.className = 'row-flex';
+
+if (sub.type === 'checkbox') {
+                    const chk = document.createElement('input');
+                    chk.type = 'checkbox';
+                    chk.checked = sel.subs[sub.id] || false;
+                    chk.addEventListener('change', () => { sel.subs[sub.id] = chk.checked; });
+                    const lbl = document.createElement('label');
+                    lbl.style.cssText = 'font-weight:500; display:flex; align-items:center; gap:6px;';
+                    lbl.appendChild(chk);
+                    lbl.appendChild(document.createTextNode(sub.name));
+                    row.appendChild(lbl);
+
+                    const priceDiv = document.createElement('div');
+                    priceDiv.className = 'price-edit';
+                    const inp = document.createElement('input');
+                    inp.type = 'number';
+                    inp.min = 0;
+                    inp.step = 1000;
+                    inp.value = sel.subs[sub.id + '_price']  sub.pricePerMeter  0;
+                    inp.addEventListener('input', () => {
+                        sel.subs[sub.id + '_price'] = parseFloat(inp.value) || 0;
+                    });
+                    priceDiv.appendChild(inp);
+                    priceDiv.appendChild(document.createTextNode('تومان/متر'));
+                    row.appendChild(priceDiv);
+
+                } else if (sub.type === 'number'
+
+) {
+                    const field = document.createElement('div');
+                    field.className = 'field';
+                    const lbl = document.createElement('label');
+                    lbl.textContent = sub.name;
+                    const inp = document.createElement('input');
+                    inp.type = 'number';
+                    inp.min = 0;
+                    inp.step = 0.5;
+                    inp.value = sel.subs[sub.id] || 0;
+                    inp.addEventListener('input', () => {
+                        sel.subs[sub.id] = parseFloat(inp.value) || 0;
+                    });
+                    field.appendChild(lbl);
+                    field.appendChild(inp);
+                    row.appendChild(field);
+
+                    if (sub.pricePerMeter > 0) {
+                        const priceDiv = document.createElement('div');
+                        priceDiv.className = 'price-edit';
+                        const inp2 = document.createElement('input');
+                        inp2.type = 'number';
+                        inp2.min = 0;
+                        inp2.step = 1000;
+                        inp2.value = sel.subs[sub.id + '_price'] || sub.pricePerMeter;
+                        inp2.addEventListener('input', () => {
+                            sel.subs[sub.id + '_price'] = parseFloat(inp2.value) || 0;
+                        });
+                        priceDiv.appendChild(inp2);
+                        priceDiv.appendChild(document.createTextNode('تومان/متر'));
+                        row.appendChild(priceDiv);
+                    }
+
+                } else if (sub.type === 'radio') {
+                    const div = document.createElement('div');
+                    div.style.cssText = 'width:100%;';
+                    const lbl = document.createElement('label');
+                    lbl.style.cssText = 'font-weight:600; display:block; margin-bottom:6px;';
+                    lbl.textContent = sub.name;
+                    div.appendChild(lbl);
+
+                    const groupDiv = document.createElement('div');
+                    groupDiv.className = 'check-group';
+                    sub.options.forEach(opt => {
+                        const r = document.createElement('input');
+                        r.type = 'radio';
+                        r.name = 'radio_' + main.id + '_' + sub.id;
+                        r.value = opt;
+
+r.checked = (sel.subs[sub.id] === opt);
+                        r.addEventListener('change', () => {
+                            if (r.checked) sel.subs[sub.id] = opt;
+                        });
+                        const l = document.createElement('label');
+                        l.appendChild(r);
+                        l.appendChild(document.createTextNode(opt));
+                        groupDiv.appendChild(l);
+                    });
+                    div.appendChild(groupDiv);
+                    row.appendChild(div);
+
+                    // قیمت برای تخریب
+                    const priceDiv = document.createElement('div');
+                    priceDiv.className = 'price-edit';
+                    const inp3 = document.createElement('input');
+                    inp3.type = 'number';
+                    inp3.min = 0;
+                    inp3.step = 1000;
+                    const currentPrice = sel.subs[sub.id + '_price']  sub.priceMap?.[sel.subs[sub.id]]  80000;
+                    inp3.value = currentPrice;
+                    inp3.addEventListener('input', () => {
+                        sel.subs[sub.id + '_price'] = parseFloat(inp3.value) || 0;
+                    });
+                    priceDiv.appendChild(inp3);
+                    priceDiv.appendChild(document.createTextNode('تومان/متر'));
+                    row.appendChild(priceDiv);
+                }
+
+                group.appendChild(row);
+                card.appendChild(group);
+            });
+
+            container.appendChild(card);
+        });
+
+        if (container.children.length === 0) {
+            container.innerHTML = '<p style="color:#8899aa; text-align:center; padding:30px 0;"
+
+>هیچ آیتمی انتخاب نشده است. لطفاً به مرحله قبل برگردید و حداقل یک آیتم انتخاب کنید.</p>';
+        }
+    }
+
+    // ================================================================
+    //  محاسبه نهایی
+    // ================================================================
+    function calculateFinal() {
+        const items = [];
+        let hasSelected = false;
+        let grandTotal = 0;
+
+        MAIN_ITEMS.forEach(main => {
+            const sel = selections[main.id];
+            if (!sel.checked) return;
+            hasSelected = true;
+
+            main.subs.forEach(sub => {
+                let price = parseFloat(sel.subs[sub.id + '_price']) || 0;
+                let count = 1;
+
+                if (sub.type === 'checkbox') {
+                    if (!sel.subs[sub.id]) return;
+                } else if (sub.type === 'number') {
+                    count = parseFloat(sel.subs[sub.id]) || 0;
+                    if (count === 0) return;
+                } else if (sub.type === 'radio') {
+                    const selectedOpt = sel.subs[sub.id];
+                    if (!selectedOpt) return;
+                    if (!sel.subs[sub.id + '_price'] || sel.subs[sub.id + '_price'] === 0) {
+                        price = sub.priceMap?.[selectedOpt] || 0;
+                    }
+                }
+
+                const total = metraj  price  (sub.type === 'number' ? count : 1);
+                if (total > 0) {
+                    grandTotal += total;
+                    items.push({
+                        mainName: main.name,
+                        subName: sub.name,
+                        count: count,
+                        pricePerMeter: price,
+                        total: total
+                    });
+                }
+            });
+        });
+
+        if (!hasSelected || items.length === 0) {
+            alert('لطفاً حداقل یک آیتم معتبر انتخاب کنید.');
+            return;
+        }
+
+        // نمایش مرحله ۴
+        goToStep(4);
+        const resultDiv = document.getElementById('resultSummary');
+        let html = '';
+        items.forEach(item => {
+
+html += <div class="summary-row">
+                        <span>${item.mainName} — ${item.subName} ${item.count > 1 ? '(' + item.count + ' × )' : ''}</span>
+                        <span>${metraj} × ${item.pricePerMeter.toLocaleString()} = <strong>${item.total.toLocaleString()}</strong> تومان</span>
+                     </div>;
+        });
+        html += <div class="summary-row">
+                    <span>💰 برآورد هزینهٔ کل</span>
+                    <span class="total-price">${grandTotal.toLocaleString()} تومان</span>
+                 </div>;
+        resultDiv.innerHTML = html;
+    }
+
+    // ================================================================
+    //  کنترل مراحل
+    // ================================================================
+    function goToStep(num) {
+        document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+        document.getElementById('step' + num).classList.add('active');
+        document.getElementById('stepBadge').textContent = 'مرحله ' + num + ' از ۴';
+
+        if (num === 2) {
+            const m = parseFloat(document.getElementById('metrajInput').value) || 100;
+            metraj = m;
+            document.getElementById('metrajDisplay2').textContent = metraj + ' متر';
+            renderMainItems();
+        }
+        if (num === 3) {
+            const m = parseFloat(document.getElementById('metrajInput').value) || 100;
+            metraj = m;
+            document.getElementById('metrajDisplay3').textContent = metraj + ' متر';
+            renderDetails();
+        }
+        if (num === 1) {
+            document.getElementById('metrajInput').value = metraj;
+        }
+    }
+
+    function resetAll() {
+        initSelections();
+        document.getElementById('metrajInput').value = 100;
+        metraj = 100;
+        goToStep(1);
+    }
+
+    // مقداردهی اولیه
+    window.onload = function() {
+        goToStep(1);
+    };
+</script>
+</body>
+</html>
+
